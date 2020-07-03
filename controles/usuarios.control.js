@@ -67,6 +67,8 @@ let getUsuarios = async(req, res) => {
     })
 }
 
+let nuevoUsuario = ( req, res) => {}
+ 
 let updateDateMany = async(req, res) => {
     let db = await connectDb()
     let data = req.body
