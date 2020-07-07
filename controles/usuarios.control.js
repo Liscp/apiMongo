@@ -2,51 +2,12 @@
 'use strict'
 
 const connectDb = require('../config/db'),
-      fs = require('fs')
-const { ObjectId } = require('mongodb')
+      fs = require('fs'),
+      bcrypt = require('bcrypt'),
+      jwt = require('jsonwebtoken')
 
 let prueba = (req, res) => {
     res.status(200).send('Hola API')
-}
-
-let getAll = async(req, res) => {
-    let db = await connectDb();
-    db.collection('usuarios').find().toArray()
-    .then(data => {
-        res.status(200).json({
-            transaccion: true,
-            data,
-            msg: `Datos obtenidos ${data.length}`
-        })
-    })
-    .catch(err => {
-        res.status(500).json({
-            transaccion: false,
-            data: null,
-            msg: err
-        })
-    })
-} 
-
-let getById = async (req, res) => {
-    let db = await connectDb()
-        id = new ObjectId(req.query.id)
-    db.collection('usuarios').find({'_id': id}).toArray()
-
-    .then(data => {
-        res.status(200).json({
-            transaccion: true,
-            data,
-            msg: `Datos obtenidos ${data.length}`
-        })
-    })
-    .catch(err => {
-        res.status(500).json({
-            transaccion: false,
-            data: null,
-            msg: err
-        })
-    })
 }
 
 let getUsuarios = async(req, res) => {
@@ -56,7 +17,8 @@ let getUsuarios = async(req, res) => {
         res.status(200).json({
             transaccion: true,
             data: data,
-            msg: "listo"
+            msg: "listo",
+            token: req.token
         })
     }).catch(err => {
         res.status(500).json({
@@ -67,102 +29,50 @@ let getUsuarios = async(req, res) => {
     })
 }
 
-let nuevoUsuario = ( req, res) => {}
- 
-let updateDateMany = async(req, res) => {
+let nuevoUsuario = async( req, res) => {
+    let usuario = req.body.usuario
     let db = await connectDb()
-    let data = req.body
-    db.collection('usuarios').updateMany({'sexo': data.sexo}, {$set: {'edad': data.edad, 'direccion': 'Quito'}})
-    .then(data => {
+    db.collection('usuarios').insertOne(usuario)
+    .then( data => {
         res.status(200).json({
-            transaccion: true,
-            data: data,
-            msg: "datos actualizados"
+            data,
+            msg: 'Usuario OK'
         })
     }).catch(err => {
         res.status(500).json({
-            transaccion: false,
-            data: null,
-            msg: `El error es ${err}`
+            data,
+            msg: 'No se pudo crear el usuario'
         })
     })
 }
 
-let posmanQuery = (req, res) => {
-    let nombre = req.query.nombre
-    let apellido = req.query.apellido
-    let edad = req.query.edad
-    let persona = req.query
-
-    console.log(req.query)
-    console.log(persona)
-
-    let data = {
-        nombre,
-        apellido,
-        edad
+let loginUsuario = ( req, res) => {
+    let email = req.body.data.email
+    let passw = req.body.data.passw
+    //email obtenemos los datos del usuario
+    let usuario = {
+        nombre: "Rodrigo",
+        passw: "$2b$10$8ivfFX8nxwvZY3Bx9F.TsOl7iH4ba4kkNRmsQmfZZasHFFrBWjyRi",
+        createAt: "2020-07-05T17:22:47.498Z",
+        sessionID: "nhYDrioSKYCuCXFGG56ZZJ95-mIUd35D",
+        _id: "5f020c672866d8153a7c85ee"
     }
+
+    let token = jwt.sign({data: usuario}, process.env.KEY_JWT, {
+        algorithm: 'HS256',
+        expiresIn: 60
+    })
+    console.log(token)
     res.status(200).json({
-        transaccion: true,
-        data,
-        msg: ''
+        passw: usuario.passw,
+        token 
     })
 }
-
-let posmanParams = (req, res) => {
-    let nombre = req.params.nombre
-    let apellido = req.params.apellido
-    let edad = req.params.edad
-    let persona = req.params
-
-    console.log(persona)
-
-    let data = {
-        nombre,
-        apellido,
-        edad
-    }
-    res.status(200).json({
-        transaccion: true,
-        data,
-        msg: ''
-    })
-}
-
-let posmanBody = (req, res) => {
-    /*console.log(req.body)
-    let nombre = req.body.data.nombre
-    let apellido = req.body.data.apellido
-    let edad = req.body.data.edad
-    let persona = req.body
-
-    console.log(persona)*/
-
-    let data = req.body.data
-    console.log(data)
-
-    data.nombre = data.nombre + 'casa'
-
-    /*let data = {
-        nombre,
-        apellido,
-        edad
-    }*/
-
-    res.status(200).json({
-        transaccion: true,
-        data,
-        msg: ''
-    })
-}
-
-
 module.exports = {
     prueba,
     getUsuarios,
-    posmanQuery,
-    posmanParams,
-    posmanBody
+    nuevoUsuario,
+    loginUsuario
 
 
 }
