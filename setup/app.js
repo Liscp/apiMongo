@@ -24,7 +24,7 @@ let app = express(),
         } 
     },
     corsOptions = {
-        origin: 'http://miweb.com:3500',
+        origin: 'http://localhost:4200',
         optionsSuccessStatus: 200
     }
 

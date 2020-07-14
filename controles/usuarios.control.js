@@ -30,9 +30,11 @@ let getUsuarios = async(req, res) => {
 }
 
 let nuevoUsuario = async( req, res) => {
-    let usuario = req.body.usuario
+    let email = req.body.email
+    let contasena = req.body.contrasena
+    const data = { 'email': email, 'contrasena': contasena }
     let db = await connectDb()
-    db.collection('usuarios').insertOne(usuario)
+    db.collection('usuarios').insertMany(data)
     .then( data => {
         res.status(200).json({
             data,
@@ -46,9 +48,23 @@ let nuevoUsuario = async( req, res) => {
     })
 }
 
+
 let loginUsuario = ( req, res) => {
-    let email = req.body.data.email
-    let passw = req.body.data.passw
+    let email = req.body.email
+    let contrasena = req.body.contrasena
+    const datos = {'email': email, 'contrasena': contrasena}
+    db.collection('usuarios').find(datos)
+    .then( data => {
+        res.status(200).json({
+            data,
+            msg: 'Login exitoso'
+        })
+    }).catch(err => {
+        res.status(500).json({
+            data,
+            msg: 'No se puede Iniciar Sesión'
+        })
+    })
     //email obtenemos los datos del usuario
     let usuario = {
         nombre: "Rodrigo",

@@ -1,0 +1,11 @@
+<div class="register-form">
+    <div class="form">
+        <form (submit)="registrar()" class="register-form">
+            <input type="text" placeholder="Email" [(ngModel)]="datos.email"/>
+            <input type="password" placeholder="Contraseña" [(ngModel)]="datos.contrasena"/>
+            <button type="submit">Registrar</button>
+            <p class="message">Already registered? <a href="#">Iniciar Sesión</a></p>
+        </form>
+    </div>
+</div>
+

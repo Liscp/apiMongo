@@ -1,0 +1,10 @@
+<div class="login-page">
+    <div class="form">
+      <form (submit)="getUsuarios()" class="login-form">
+        <input type="text" placeholder="Email" [(ngModel)]="datos.email"/>
+        <input type="password" placeholder="Contraseña" [(ngModel)]="datos.contrasena"/>
+        <button type="submit">Iniciar Login</button>
+        <p class="message">No tienes Cuenta? <a href="#">Crear Cuenta</a></p>
+      </form>
+    </div>
+  </div>

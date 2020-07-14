@@ -4,21 +4,14 @@
 const bcrypt = require('bcrypt')
 
 let codificarPassword = (req,res, next) => {
-    let usuario = req.body.usuario || null
-    if (!usuario || usuario.passw == '' || !usuario.passw) {
+    let usuario = req.body || null
+    if (!usuario || usuario.contrasena == '' || !usuario.contrasena) {
         console.log('usuario no valido')
         return res.status(200).send('usuario o contraseña invalidos')
     }else{
-        let codificarPassword = bcrypt.hashSync(usuario.passw, bcrypt.genSaltSync(10))
+        let codificarPassword = bcrypt.hashSync(usuario.contrasena, bcrypt.genSaltSync(10))
         if (codificarPassword) {
-            req.body.usuario.passw = codificarPassword
-            req.body.usuario.createAt = new Date()
-            if (req.sessionID) {
-                req.body.usuario.sessionID = req.sessionID   
-                next()
-            }else{
-                return res.status(200).send('No se encontro una sesión válida')
-            }
+            req.body.contrasena = codificarPassword
         }else {
             return res.status(200).send('el password no se pudo procesar')
         }

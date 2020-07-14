@@ -1,0 +1,6 @@
+<div class="sidenav">
+    <span (click)='nuevoDocumento()'>Documento Nuevo</span>
+    <span [class.selected]='docId === actualDoc' *ngFor='let docId of documentos | async' [routerLink]="['/documentos']" routerLinkActive="router-link-active" (click)="leerDocumento(docId)">
+        {{ docId }}
+    </span>
+</div>
